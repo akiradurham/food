@@ -1,0 +1,8 @@
+[
+    {
+        "name": "test",
+        "time": 30,
+        "ingredients": ["da", "asd", "asda"],
+        "instructions": ["asdghfas", "asdasd", "asd"]
+    }
+]

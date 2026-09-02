@@ -12,7 +12,7 @@ def load_recipes():
 
 # save recipes to file
 def save_recipe(recipes):
-    with open("recipes.json") as file:
+    with open("recipes.json", "w") as file:
         return json.dump(recipes, file, indent = 4)
 
 # app
@@ -22,7 +22,9 @@ recipes = load_recipes()
 
 st.sidebar.header("Menu")
 
-page = st.sidebar.radio("Go to", ["Recipes", "Add Recipe"])
+st.divider()
+
+page = st.sidebar.radio("Select a page", ["Recipes", "Add Recipe"])
 
 # recipe page
 if page == "Recipes":
@@ -47,26 +49,30 @@ if page == "Recipes":
                 st.write(f"- {ingredient}")
 
             st.subheader("Instructions")
-            st.write(recipe["instructions"])
+            for instruction in recipe["instructions"]:
+                st.write(f"- {instruction}")
 
 # add recipe page
 elif page == "Add Recipe":
     st.header("Add a Recipe")
-    name = st.text_input("Recipe Name")
-    time = st.number_input("Cooking time in minutes", min_value=1)
-    ingredients = st.text_area("Ingredients")
-    instructions = st.text_area("Instructions")
+    with st.form("add_recipe_form"):
+        name = st.text_input("Recipe Name")
+        time = st.number_input("Cooking time in minutes", min_value=1)
+        ingredients = st.text_area("Ingredients")
+        instructions = st.text_area("Instructions")
+        submitted = st.form_submit_button("Save Recipe")
 
-    if st.button("Save Recipe"):
+    if submitted:
         if not name or not time or not ingredients or not instructions:
             st.error("Please fill out all fields")
         else:
             new_recipe = {
                 "name": name,
                 "time": time,
-                "ingredients": ingredients,
-                "instructions": instructions
+                "ingredients": ingredients.split("\n"),
+                "instructions": instructions.split("\n")
             }
             recipes.append(new_recipe)
-            save_recipe(new_recipe)
+            save_recipe(recipes)
+            st.rerun()
             st.success("Recipe saved!")
